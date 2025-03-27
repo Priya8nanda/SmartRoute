@@ -18,7 +18,12 @@ SmartRoute is an AI-powered software solution designed to optimize public transp
 - 🛡️ Feature 3:  Dynamic Stop Optimization: Suggests alternate stops in real-time to distribute passenger load and reduce overcrowding. Live Data Visualization & Monitoring: Uses Leaflet.js for an interactive dashboard displaying congestion hotspots and bus routes.
 
 ## 🎥 Product Demo
-[![Watch the Demo](https://via.placeholder.com/300x200?text=Click+for+Demo+Video)](https://youtube.com/link-to-video)
+![image](https://github.com/user-attachments/assets/54e22b31-32db-4395-a7b0-9a57c5dcbbce)
+![image](https://github.com/user-attachments/assets/396d8ba3-eb5e-4fa3-9f57-4dc81abe90b5)
+![image](https://github.com/user-attachments/assets/b645f5b9-9123-4007-bee9-9e5df9c319d5)
+
+
+
 *Click the image above to view our product walkthrough*
 
 ## 🛠️ Tech Stack
