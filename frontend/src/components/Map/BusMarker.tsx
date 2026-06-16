@@ -10,14 +10,18 @@ interface BusMarkerProps {
 }
 
 const BusMarker = ({ bus, onClick }: BusMarkerProps) => {
-  // Create a custom icon based on the bus status
+  // Create a custom icon based on the bus status and direction
   const busIcon = useMemo(() => {
-    let className = 'bus-marker-normal';
+    let className = '';
     
+    // First, determine status class
     if (bus.status === 'alert') {
       className = 'bus-marker-alert';
     } else if (bus.status === 'alternate') {
       className = 'bus-marker-alternate';
+    } else {
+      // Normal status bus is colored differently based on direction
+      className = bus.direction === 'inbound' ? 'bus-marker-inbound' : 'bus-marker-outbound';
     }
     
     return L.divIcon({
@@ -33,11 +37,11 @@ const BusMarker = ({ bus, onClick }: BusMarkerProps) => {
       iconAnchor: [20, 20],
       popupAnchor: [0, -20]
     });
-  }, [bus.status]);
+  }, [bus.status, bus.direction]);
 
   const statusText = {
     normal: 'On Schedule',
-    alert: 'Clustered - Needs Rerouting',
+    alert: 'Clustered - Needs Alternate Stop',
     alternate: 'Taking Alternate Route'
   };
 
@@ -56,6 +60,11 @@ const BusMarker = ({ bus, onClick }: BusMarkerProps) => {
           <div className="flex justify-between text-sm">
             <span className="text-gray-600 dark:text-gray-400">Route:</span>
             <span className="font-medium">{bus.route}</span>
+          </div>
+          
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600 dark:text-gray-400">Direction:</span>
+            <span className="font-medium capitalize">{bus.direction}</span>
           </div>
           
           <div className="flex justify-between text-sm">

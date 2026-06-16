@@ -117,16 +117,21 @@
   animation: fade-in 0.3s ease-out forwards;
 }
 
-.bus-marker-normal {
-  @apply bg-bus-normal text-white;
+/* Updated bus marker styles */
+.bus-marker-inbound {
+  @apply bg-sky-500 text-white;
+}
+
+.bus-marker-outbound {
+  @apply bg-purple-500 text-white;
 }
 
 .bus-marker-alert {
-  @apply bg-bus-alert text-white animate-pulse-light;
+  @apply bg-red-500 text-white animate-pulse-light;
 }
 
 .bus-marker-alternate {
-  @apply bg-bus-alternate text-white;
+  @apply bg-teal-500 text-white;
 }
 
 .marker-icon {

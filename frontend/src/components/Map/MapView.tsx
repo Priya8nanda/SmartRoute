@@ -23,20 +23,20 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 const MapView = () => {
-  const { buses, alerts, loading, rerouteBus } = useBusData();
+  const { buses, alerts, loading, goToAlternateStop } = useBusData();
   
   // Set default map view to New York City
   const defaultPosition: [number, number] = [40.7128, -74.006];
   const defaultZoom = 14;
   
-  // Handle bus click - could trigger a reroute action
+  // Handle bus click - could trigger a go to alternate stop action
   const handleBusClick = (busId: string) => {
     console.log('Bus clicked:', busId);
     
     // Check if this bus is in alert state
     const bus = buses.find(b => b.id === busId);
     if (bus?.status === 'alert') {
-      rerouteBus(busId);
+      goToAlternateStop(busId);
     }
   };
 
@@ -82,24 +82,28 @@ const MapView = () => {
                 <h3 className="font-medium text-sm">Map Legend</h3>
                 <ul className="mt-2 text-xs space-y-2">
                   <li className="flex items-center space-x-2">
-                    <div className="w-3 h-3 rounded-full bg-bus-normal"></div>
-                    <span>Normal Bus</span>
+                    <div className="w-3 h-3 rounded-full bg-sky-500"></div>
+                    <span>Inbound Bus</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <div className="w-3 h-3 rounded-full bg-bus-alert animate-pulse"></div>
-                    <span>Clustered Bus (Needs Rerouting)</span>
+                    <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                    <span>Outbound Bus</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <div className="w-3 h-3 rounded-full bg-bus-alternate"></div>
-                    <span>Rerouted Bus</span>
+                    <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                    <span>Clustered Bus (Needs Alternate Stop)</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <div className="w-3 h-0.5 bg-bus-alternate" style={{ borderStyle: 'dashed' }}></div>
+                    <div className="w-3 h-3 rounded-full bg-teal-500"></div>
+                    <span>Bus Using Alternate Stop</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-3 h-0.5 bg-teal-500" style={{ borderStyle: 'dashed' }}></div>
                     <span>Alternate Route</span>
                   </li>
                 </ul>
                 <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                  Click on a clustered bus to reroute it.
+                  Click on a clustered bus to send it to an alternate stop.
                 </p>
               </div>
             </div>

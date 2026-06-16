@@ -14,13 +14,13 @@ import {
 interface BusListProps {
   buses: Bus[];
   onSelectBus: (busId: string) => void;
-  onRerouteBus: (busId: string) => void;
+  onGoToAlternateStop: (busId: string) => void;
   isAdmin?: boolean;
 }
 
-const BusList = ({ buses, onSelectBus, onRerouteBus, isAdmin = false }: BusListProps) => {
+const BusList = ({ buses, onSelectBus, onGoToAlternateStop, isAdmin = false }: BusListProps) => {
   const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState<'id' | 'route' | 'status'>('id');
+  const [sortBy, setSortBy] = useState<'id' | 'route' | 'status' | 'direction'>('id');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   // Filter buses by search
@@ -41,13 +41,16 @@ const BusList = ({ buses, onSelectBus, onRerouteBus, isAdmin = false }: BusListP
       // Sort by status priority
       const statusOrder = { alert: 0, alternate: 1, normal: 2 };
       comparison = statusOrder[a.status] - statusOrder[b.status];
+    } else if (sortBy === 'direction') {
+      // Sort by direction
+      comparison = a.direction.localeCompare(b.direction);
     }
     
     return sortOrder === 'asc' ? comparison : -comparison;
   });
 
   // Toggle sort
-  const toggleSort = (column: 'id' | 'route' | 'status') => {
+  const toggleSort = (column: 'id' | 'route' | 'status' | 'direction') => {
     if (sortBy === column) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
@@ -99,6 +102,17 @@ const BusList = ({ buses, onSelectBus, onRerouteBus, isAdmin = false }: BusListP
               </th>
               <th 
                 className="px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 cursor-pointer"
+                onClick={() => toggleSort('direction')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Direction</span>
+                  {sortBy === 'direction' && (
+                    <ArrowUpDown className="h-3 w-3" />
+                  )}
+                </div>
+              </th>
+              <th 
+                className="px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 cursor-pointer"
                 onClick={() => toggleSort('status')}
               >
                 <div className="flex items-center space-x-1">
@@ -134,6 +148,7 @@ const BusList = ({ buses, onSelectBus, onRerouteBus, isAdmin = false }: BusListP
                   </div>
                 </td>
                 <td className="px-4 py-3 text-sm">{bus.route}</td>
+                <td className="px-4 py-3 text-sm capitalize">{bus.direction}</td>
                 <td className="px-4 py-3 text-sm">
                   <div className="flex items-center space-x-1">
                     {bus.status === 'alert' ? (
@@ -144,7 +159,7 @@ const BusList = ({ buses, onSelectBus, onRerouteBus, isAdmin = false }: BusListP
                     ) : bus.status === 'alternate' ? (
                       <>
                         <CornerUpRight className="h-4 w-4 text-teal-500" />
-                        <span className="text-teal-600 dark:text-teal-400">Rerouted</span>
+                        <span className="text-teal-600 dark:text-teal-400">Alt. Route</span>
                       </>
                     ) : (
                       <span className="text-green-600 dark:text-green-400">Normal</span>
@@ -188,9 +203,9 @@ const BusList = ({ buses, onSelectBus, onRerouteBus, isAdmin = false }: BusListP
                         variant="outline" 
                         size="sm"
                         className="text-teal-600 border-teal-200 hover:bg-teal-50 dark:text-teal-400 dark:border-teal-800 dark:hover:bg-teal-900/20"
-                        onClick={() => onRerouteBus(bus.id)}
+                        onClick={() => onGoToAlternateStop(bus.id)}
                       >
-                        Reroute
+                        Alt. Stop
                       </Button>
                     )}
                   </div>

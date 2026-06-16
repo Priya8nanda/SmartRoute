@@ -8,6 +8,7 @@ export interface Bus {
   status: 'normal' | 'alert' | 'alternate';
   speed: number;
   heading: number;
+  direction: 'inbound' | 'outbound'; // Add direction property
   lastUpdated: string;
   capacity: number;
   occupancy: number;
@@ -36,6 +37,7 @@ const generateInitialBusData = (): Bus[] => {
       status: 'normal',
       speed: 25,
       heading: 90,
+      direction: 'inbound',
       lastUpdated: new Date().toISOString(),
       capacity: 50,
       occupancy: 28
@@ -47,6 +49,7 @@ const generateInitialBusData = (): Bus[] => {
       status: 'normal',
       speed: 18,
       heading: 180,
+      direction: 'inbound',
       lastUpdated: new Date().toISOString(),
       capacity: 50,
       occupancy: 35
@@ -58,6 +61,7 @@ const generateInitialBusData = (): Bus[] => {
       status: 'alert',
       speed: 0,
       heading: 270,
+      direction: 'inbound',
       lastUpdated: new Date().toISOString(),
       capacity: 50,
       occupancy: 42
@@ -69,6 +73,7 @@ const generateInitialBusData = (): Bus[] => {
       status: 'alternate',
       speed: 22,
       heading: 45,
+      direction: 'outbound',
       lastUpdated: new Date().toISOString(),
       capacity: 50,
       occupancy: 15
@@ -80,6 +85,7 @@ const generateInitialBusData = (): Bus[] => {
       status: 'normal',
       speed: 30,
       heading: 135,
+      direction: 'outbound',
       lastUpdated: new Date().toISOString(),
       capacity: 50,
       occupancy: 22
@@ -87,7 +93,7 @@ const generateInitialBusData = (): Bus[] => {
   ];
 };
 
-// Simulated cluster alerts
+// Simulated cluster alerts - now only clustering buses in the same direction
 const generateInitialAlertData = (): ClusterAlert[] => {
   return [
     {
@@ -150,8 +156,8 @@ export const useBusData = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Simulate rerouting a bus
-  const rerouteBus = (busId: string) => {
+  // Simulate sending a bus to alternate stop
+  const goToAlternateStop = (busId: string) => {
     setBuses(prevBuses => 
       prevBuses.map(bus => 
         bus.id === busId 
@@ -183,7 +189,7 @@ export const useBusData = () => {
     alerts,
     loading,
     error,
-    rerouteBus,
+    goToAlternateStop, // Renamed from rerouteBus
     clearAlert
   };
 };

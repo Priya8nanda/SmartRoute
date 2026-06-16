@@ -1,4 +1,3 @@
-
 import { useBusData } from '@/hooks/useBusData';
 import BusList from './BusList';
 import ClusterAlert from './ClusterAlert';
@@ -33,13 +32,11 @@ const Dashboard = ({ onSelectBus, onViewAlertOnMap, isAdmin = false }: Dashboard
     );
   }
 
-  // Calculate statistics
   const activeAlerts = alerts.length;
   const activeBuses = buses.length;
   const busesWithAlerts = buses.filter(bus => bus.status === 'alert').length;
   const reroutedBuses = buses.filter(bus => bus.status === 'alternate').length;
   
-  // Calculate average occupancy
   const totalCapacity = buses.reduce((acc, bus) => acc + bus.capacity, 0);
   const totalOccupancy = buses.reduce((acc, bus) => acc + bus.occupancy, 0);
   const averageOccupancy = totalCapacity > 0 
@@ -49,7 +46,6 @@ const Dashboard = ({ onSelectBus, onViewAlertOnMap, isAdmin = false }: Dashboard
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total buses */}
         <Card className="animate-scale-in">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -79,7 +75,6 @@ const Dashboard = ({ onSelectBus, onViewAlertOnMap, isAdmin = false }: Dashboard
           </CardContent>
         </Card>
         
-        {/* Active alerts */}
         <Card className="animate-scale-in [animation-delay:100ms]">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -109,7 +104,6 @@ const Dashboard = ({ onSelectBus, onViewAlertOnMap, isAdmin = false }: Dashboard
           </CardContent>
         </Card>
         
-        {/* Occupancy */}
         <Card className="animate-scale-in [animation-delay:200ms]">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -138,7 +132,6 @@ const Dashboard = ({ onSelectBus, onViewAlertOnMap, isAdmin = false }: Dashboard
           </CardContent>
         </Card>
         
-        {/* System status */}
         <Card className="animate-scale-in [animation-delay:300ms]">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -179,8 +172,10 @@ const Dashboard = ({ onSelectBus, onViewAlertOnMap, isAdmin = false }: Dashboard
               <ClusterAlert 
                 key={alert.id}
                 alert={alert}
+                buses={buses}
                 onViewOnMap={() => onViewAlertOnMap(alert.id)}
                 onClearAlert={clearAlert}
+                onRerouteBus={rerouteBus}
                 isAdmin={isAdmin}
               />
             ))
