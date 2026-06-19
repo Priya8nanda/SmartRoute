@@ -115,6 +115,69 @@ const generateInitialAlertData = (): ClusterAlert[] => {
   ];
 };
 
+//step2
+const detectClusters = async (buses: Bus[]) => {
+
+  const response = await fetch(
+    "https://smartroute-adxr.onrender.com/detect-clusters",
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+
+        bus_points:buses.map(bus => ({
+          bus_id: bus.id,
+          speed: bus.speed,
+          people_count: bus.occupancy,
+          latitude: bus.position[0],
+          longitude: bus.position[1],
+          timestamp: bus.lastUpdated
+        }))
+
+      })
+    }
+  );
+
+  if(!response.ok){
+    throw new Error("Backend error");
+  }
+
+  return await response.json();
+};
+
+//step4
+const createAlertsFromClusters = (
+ result:any,
+ buses:Bus[]
+):ClusterAlert[] => {
+
+ return result.clusters.map(
+ (cluster:string[],index:number)=>{
+
+   const bus = buses.find(
+    b=>cluster.includes(b.id)
+   );
+
+   return {
+    id:`ALERT-${index+1}`,
+
+    busIds:cluster,
+
+    location:bus 
+      ? bus.position
+      : [0,0],
+
+    severity:
+      result.overall_risk_level.toLowerCase(),
+
+    timestamp:new Date().toISOString()
+   };
+
+ });
+
+};
 // Simulate real-time movement
 const updateBusPosition = (bus: Bus): Bus => {
   const latChange = (Math.random() - 0.5) * 0.0005;
@@ -133,7 +196,8 @@ const updateBusPosition = (bus: Bus): Bus => {
 
 export const useBusData = () => {
   const [buses, setBuses] = useState<Bus[]>(generateInitialBusData());
-  const [alerts, setAlerts] = useState<ClusterAlert[]>(generateInitialAlertData());
+  //step3
+  const [alerts,setAlerts] = useState<ClusterAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -143,18 +207,63 @@ export const useBusData = () => {
     
     // Initial data load
     setTimeout(() => {
-      setBuses(generateInitialBusData());
-      setAlerts(generateInitialAlertData());
+      //step5
+      const initialBuses = generateInitialBusData();
+
+setBuses(initialBuses);
+
+
+detectClusters(initialBuses)
+.then(result=>{
+
+ const newAlerts =
+ createAlertsFromClusters(result,initialBuses);
+
+ setAlerts(newAlerts);
+
+})
+.catch(error=>{
+ console.log(error);
+});
       setLoading(false);
     }, 1000);
     
     // Update bus positions every 2 seconds
-    const interval = setInterval(() => {
-      setBuses(prevBuses => prevBuses.map(updateBusPosition));
-    }, 2000);
-    
-    return () => clearInterval(interval);
+    //step6
+    //againstep1
   }, []);
+  //againstep2
+  useEffect(() => {
+  const interval = setInterval(() => {
+
+    setBuses(prevBuses => {
+      const updated = prevBuses.map(updateBusPosition);
+
+      detectClusters(updated)
+        .then(result => {
+
+          console.log("FULL BACKEND RESPONSE",result);
+          console.log("CLUSTERS ONLY");
+          console.log(result.clusters);
+
+          const newAlerts = createAlertsFromClusters(result, updated);
+
+          //change 2
+          console.log("NEW ALERTS SENT TO UI");
+console.log(JSON.stringify(newAlerts, null, 2));
+
+          setAlerts(newAlerts);
+
+        })
+        .catch(console.log);
+
+      return updated;
+    });
+
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, []);
 
   // Simulate sending a bus to alternate stop
   const goToAlternateStop = (busId: string) => {

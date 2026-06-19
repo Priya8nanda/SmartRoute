@@ -127,7 +127,7 @@ async def detect_clusters(request: ClusteringRequest):
         # Perform DBSCAN clustering
         # eps: maximum distance between samples (in degrees)
         # min_samples: minimum number of samples in a neighborhood
-        clustering = DBSCAN(eps=0.01, min_samples=2).fit(X)
+        clustering = DBSCAN(eps=0.002, min_samples=2).fit(X)
         
         # Get cluster labels
         labels = clustering.labels_

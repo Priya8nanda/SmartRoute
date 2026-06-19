@@ -37,6 +37,13 @@ const ClusterAlert = ({
   const sameDirBuses = affectedBuses.filter(bus => bus.direction === busDirection);
   const busDetails = sameDirBuses.map(bus => `${bus.id} (${bus.route})`).join(', ');
 
+  //change1
+  console.log("ALERT OBJECT");
+console.log(alert);
+
+console.log("AFFECTED BUSES");
+console.log(affectedBuses);
+
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg shadow-subtle overflow-hidden">
       <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
